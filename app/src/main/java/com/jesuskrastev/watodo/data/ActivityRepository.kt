@@ -1,6 +1,6 @@
 package com.jesuskrastev.watodo.data
 
-import com.jesuskrastev.watodo.data.firestore.activity.ActivityFsDao
+import com.jesuskrastev.watodo.data.firestore.activity.ActivityFSDao
 import com.jesuskrastev.watodo.data.room.activity.ActivityDao
 import com.jesuskrastev.watodo.models.Activity
 import kotlinx.coroutines.Dispatchers
@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ActivityRepository @Inject constructor(
-    private val activityFsDao: ActivityFsDao,
+    private val activityFsDao: ActivityFSDao,
     private val activityDao: ActivityDao,
 ) {
     suspend fun get(): List<Activity> = withContext(Dispatchers.IO) {

@@ -4,7 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class ActivityFsDao @Inject constructor(
+class ActivityFSDao @Inject constructor(
     private val firestore: FirebaseFirestore,
 ) {
     suspend fun get(): List<ActivityFirestore> {
