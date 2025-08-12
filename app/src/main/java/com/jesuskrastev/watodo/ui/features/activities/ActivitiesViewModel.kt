@@ -3,7 +3,6 @@ package com.jesuskrastev.watodo.ui.features.activities
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jesuskrastev.watodo.data.ActivityRepository
-import com.jesuskrastev.watodo.utilities.paginator.DefaultPaginator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,28 +15,6 @@ class ActivitiesViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow<ActivitiesState>(ActivitiesState())
     val state: StateFlow<ActivitiesState> = _state
-    private val paginator = DefaultPaginator(
-        initialKey = state.value.page,
-        onLoadUpdated = {
-            _state.value = _state.value.copy(isLoading = it)
-        },
-        onRequest = { nextPage ->
-            activitiesRepository.getWithPagination(nextPage, 20)
-        },
-        getNextKey = {
-            _state.value.page + 1
-        },
-        onError = {
-            // TODO:
-        },
-        onSuccess = { items, newKey ->
-            _state.value = _state.value.copy(
-                activities = _state.value.activities + items.map { it.toActivityState() },
-                page = newKey,
-                endReached = items.isEmpty(),
-            )
-        }
-    )
 
     init {
         loadActivities()
@@ -45,7 +22,9 @@ class ActivitiesViewModel @Inject constructor(
 
     private fun loadActivities() {
         viewModelScope.launch {
-            paginator.loadNextItems()
+            _state.value = _state.value.copy(
+                activities = activitiesRepository.get().map { it.toActivityState() },
+            )
         }
     }
 

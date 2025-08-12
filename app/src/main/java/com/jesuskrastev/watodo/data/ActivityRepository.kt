@@ -1,23 +1,34 @@
 package com.jesuskrastev.watodo.data
 
-import com.jesuskrastev.watodo.data.firestore.activity.ActivityDao
+import com.jesuskrastev.watodo.data.firestore.activity.ActivityFsDao
+import com.jesuskrastev.watodo.data.room.activity.ActivityDao
 import com.jesuskrastev.watodo.models.Activity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ActivityRepository @Inject constructor(
-    private val activityDao: ActivityDao
+    private val activityFsDao: ActivityFsDao,
+    private val activityDao: ActivityDao,
 ) {
-    suspend fun getWithPagination(page: Int, pageSize: Int): List<Activity> = withContext(Dispatchers.IO) {
-        val startingIndex: Int = page * pageSize
-        val activities: List<Activity> = activityDao.get().map { it.toActivity() }
+    suspend fun get(): List<Activity> = withContext(Dispatchers.IO) {
+        val local = activityDao.get().map { it.toActivity() }
+        val remote = activityFsDao.get().map { it.toActivity() }
 
         when {
-            activities.isEmpty() -> emptyList()
-            startingIndex + pageSize <= activities.size -> activities.subList(startingIndex, startingIndex + pageSize)
-            startingIndex < activities.size -> activities.subList(startingIndex, activities.size)
-            else -> emptyList()
+            local.isEmpty() -> {
+                activityDao.deleteAll()
+                remote.forEach { activityDao.insert(it.toActivityEntity()) }
+                remote
+            }
+            local.size != remote.size -> {
+                activityDao.deleteAll()
+                remote.forEach { activityDao.insert(it.toActivityEntity()) }
+                remote
+            }
+            else -> {
+                local
+            }
         }
     }
 }

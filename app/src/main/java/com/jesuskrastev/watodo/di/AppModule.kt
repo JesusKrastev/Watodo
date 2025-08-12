@@ -1,11 +1,14 @@
 package com.jesuskrastev.watodo.di
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.ktx.firestore
+import com.jesuskrastev.watodo.data.room.WatodoDB
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -17,4 +20,16 @@ class AppModule {
     fun provideFirestore(): FirebaseFirestore {
         return Firebase.firestore
     }
+
+    @Singleton
+    @Provides
+    fun provideDatabase(
+        @ApplicationContext context: Context
+    ): WatodoDB = WatodoDB.getDatabase(context)
+
+    @Singleton
+    @Provides
+    fun provideActivityDao(
+        db: WatodoDB
+    ) = db.activityDao()
 }
