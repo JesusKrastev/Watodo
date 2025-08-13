@@ -1,5 +1,6 @@
 package com.jesuskrastev.watodo.ui.features.activities
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jesuskrastev.watodo.data.ActivityRepository
@@ -24,7 +25,9 @@ class ActivitiesViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = _state.value.copy(
                 activities = activitiesRepository.get().map { it.toActivityState() },
+                isLoading = false,
             )
+            Log.d("ActivitiesViewModel", "loadActivities: ${activitiesRepository.count()}")
         }
     }
 
@@ -44,10 +47,6 @@ class ActivitiesViewModel @Inject constructor(
         when (event) {
             is ActivitiesEvent.OnExpandActivity -> {
                 onExpandActivity(event.activity)
-            }
-
-            is ActivitiesEvent.OnLoadMoreActivities -> {
-                loadActivities()
             }
 
             else -> {}

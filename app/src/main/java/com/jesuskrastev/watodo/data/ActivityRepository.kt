@@ -31,4 +31,8 @@ class ActivityRepository @Inject constructor(
             }
         }
     }
+
+    suspend fun count(): Int = withContext(Dispatchers.IO) {
+        activityFsDao.count()
+    }
 }

@@ -5,15 +5,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,9 +26,12 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.jesuskrastev.watodo.ui.composables.shimmerEffect
 import com.jesuskrastev.watodo.ui.features.components.TopBar
 
 @Composable
@@ -82,7 +87,7 @@ fun Activity(
                 )
                 Icon(
                     modifier = Modifier.clickable(onClick = {}),
-                    imageVector = Icons.Outlined.Favorite,
+                    imageVector = Icons.Outlined.BookmarkBorder,
                     contentDescription = "Save",
                 )
             }
@@ -99,9 +104,6 @@ fun ActivitiesList(
     modifier: Modifier = Modifier,
     expandedActivities: List<String>,
     activities: List<ActivityState>,
-    isLoading: Boolean,
-    endReached: Boolean,
-    onLoadMore: () -> Unit,
     onExpand: (ActivityState) -> Unit,
 ) {
     LazyColumn(
@@ -110,16 +112,26 @@ fun ActivitiesList(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         itemsIndexed(activities) { index, activity ->
-            if(index >= activities.size -1 && !endReached && !isLoading) onLoadMore()
             Activity(
                 activityState = activity,
                 expanded = expandedActivities.contains(activity.id),
                 onClick = { onExpand(activity) },
             )
         }
-        item {
-            if (isLoading)
-                CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun ActivitiesListShimmer(
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        items(20) {
+            ActivityShimmer()
         }
     }
 }
@@ -130,19 +142,24 @@ fun ActivitiesContent(
     state: ActivitiesState,
     onEvent: (ActivitiesEvent) -> Unit,
 ) {
-    ActivitiesList(
-        modifier = modifier,
-        expandedActivities = state.expandedActivities,
-        activities = state.activities,
-        isLoading = state.isLoading,
-        endReached = state.endReached,
-        onLoadMore = {
-            onEvent(ActivitiesEvent.OnLoadMoreActivities)
-        },
-        onExpand = {
-            onEvent(ActivitiesEvent.OnExpandActivity(it))
-        },
-    )
+    when {
+        state.isLoading -> {
+            ActivitiesListShimmer(
+                modifier = modifier
+            )
+        }
+
+        else -> {
+            ActivitiesList(
+                modifier = modifier,
+                expandedActivities = state.expandedActivities,
+                activities = state.activities,
+                onExpand = {
+                    onEvent(ActivitiesEvent.OnExpandActivity(it))
+                },
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -158,6 +175,35 @@ fun ActivitiesTopAppBar(
     )
 }
 
+@Composable
+fun ActivityShimmer(
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .shimmerEffect(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent,
+        ),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                fontSize = 18.sp,
+                text = "Example",
+                color = Color.Transparent,
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivitiesScreen(
@@ -167,6 +213,7 @@ fun ActivitiesScreen(
 ) {
     Scaffold(
         modifier = modifier,
+        contentWindowInsets = WindowInsets.statusBars,
         topBar = {
             ActivitiesTopAppBar()
         },

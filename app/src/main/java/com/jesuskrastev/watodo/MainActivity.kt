@@ -4,8 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,12 +32,13 @@ class MainActivity : ComponentActivity() {
                 val state: ActivitiesState by vm.state.collectAsStateWithLifecycle(initialValue = ActivitiesState())
 
                 Scaffold(
+                    contentWindowInsets = WindowInsets.navigationBars,
                     bottomBar = {
                         NavBar()
                     }
                 ) { paddingValues ->
                     ActivitiesScreen(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.padding(paddingValues),
                         state = state,
                         onEvent = vm::onEvent,
                     )

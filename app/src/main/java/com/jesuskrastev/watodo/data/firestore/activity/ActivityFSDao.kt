@@ -9,7 +9,7 @@ class ActivityFSDao @Inject constructor(
 ) {
     suspend fun get(): List<ActivityFirestore> {
         return firestore
-            .collection("debug")
+            .collection("release")
             .document("v1")
             .collection("activities")
             .get()
@@ -19,5 +19,15 @@ class ActivityFSDao @Inject constructor(
                 document.toObject(ActivityFirestore::class.java)
                     ?.copy(id = document.id)
             }
+    }
+
+    suspend fun count(): Int {
+        return firestore
+            .collection("release")
+            .document("v1")
+            .collection("activities")
+            .get()
+            .await()
+            .size()
     }
 }
