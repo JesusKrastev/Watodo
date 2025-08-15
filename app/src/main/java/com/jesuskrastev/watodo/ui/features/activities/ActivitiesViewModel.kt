@@ -27,7 +27,6 @@ class ActivitiesViewModel @Inject constructor(
                 activities = activitiesRepository.get().map { it.toActivityState() },
                 isLoading = false,
             )
-            Log.d("ActivitiesViewModel", "loadActivities: ${activitiesRepository.count()}")
         }
     }
 
