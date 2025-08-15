@@ -6,6 +6,7 @@ coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
+authVersion = "21.3.0"
 lifecycleRuntimeKtx = "2.9.2"
 activityCompose = "1.10.1"
 composeBom = "2024.09.00"
@@ -13,9 +14,12 @@ hilt = "2.52"
 hiltNavigationCompose = "1.2.0"
 ksp = "2.0.20-1.0.25"
 room = "2.6.1"
+composeNavigation = "2.8.9"
 googleServices = "4.4.2"
 
 [libraries]
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
+firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,7 +43,7 @@ androidx-material-icons-extended = { module = "androidx.compose.material:materia
 dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 dagger-hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
-firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "authVersion" }
 
 [plugins]
 com-google-dagger = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

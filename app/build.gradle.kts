@@ -58,12 +58,15 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.compose.navigation)
     // Icons
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.firestore.ktx)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.play.services.auth)
     // Hilt
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)

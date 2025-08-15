@@ -1,6 +1,7 @@
 package com.jesuskrastev.watodo.di
 
 import android.content.Context
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,4 +33,8 @@ class AppModule {
     fun provideActivityDao(
         db: WatodoDB
     ) = db.activityDao()
+
+    @Singleton
+    @Provides
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 }
