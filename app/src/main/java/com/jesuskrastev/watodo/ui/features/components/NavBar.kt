@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -45,6 +47,13 @@ fun NavBar(
             unselectedIcon = Icons.Outlined.Search,
             description = "Actividades",
             title = "Actividades",
+            onClick = {},
+        ),
+        NavOption(
+            selectedIcon = Icons.Filled.Language,
+            unselectedIcon = Icons.Outlined.Language,
+            description = "Webs",
+            title = "Webs",
             onClick = {},
         ),
         NavOption(
