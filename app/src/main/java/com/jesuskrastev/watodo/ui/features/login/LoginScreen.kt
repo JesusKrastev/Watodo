@@ -1,5 +1,6 @@
 package com.jesuskrastev.watodo.ui.features.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,8 +18,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -27,6 +31,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.jesuskrastev.watodo.R
+import com.jesuskrastev.watodo.ui.composables.CoroutineManagementSnackBar
+import com.jesuskrastev.watodo.ui.composables.SnackbarCommon
+import com.jesuskrastev.watodo.ui.navigation.ActivitiesRoute
+import com.jesuskrastev.watodo.ui.navigation.Destination
 import com.jesuskrastev.watodo.utilities.device.registerGoogleLauncher
 
 @Composable
@@ -124,9 +132,7 @@ fun GoogleLoginButton(
     onGoogleLoginSelected: (googleLauncher: (GoogleSignInClient) -> Unit) -> Unit,
 ) {
     val googleLauncher = registerGoogleLauncher(
-        signInWithGoogle = { idToken ->
-            onLoginWithGoogle(idToken)
-        },
+        loginWithGoogle = onLoginWithGoogle,
     )
 
     OutlinedButton(
@@ -202,6 +208,7 @@ fun WelcomeSubtitle(
 fun LoginContent(
     modifier: Modifier = Modifier,
     state: LoginState,
+    onNavigateTo: (Destination) -> Unit,
     onEvent: (LoginEvent) -> Unit,
 ) {
     Column(
@@ -224,9 +231,7 @@ fun LoginContent(
             onLogin = {
                 onEvent(
                     LoginEvent.OnLogin(
-                        onNavigateToActivities = {
-
-                        },
+                        onNavigateToActivities = { onNavigateTo(ActivitiesRoute) },
                     )
                 )
             }
@@ -240,7 +245,7 @@ fun LoginContent(
                 onEvent(
                     LoginEvent.OnLoginWithGoogle(
                         idToken = idToken,
-                        onNavigateToActivities = { /*TODO*/ },
+                        onNavigateToActivities = { onNavigateTo(ActivitiesRoute) },
                     )
                 )
             }
@@ -253,11 +258,26 @@ fun LoginContent(
 fun LoginScreen(
     modifier: Modifier = Modifier,
     state: LoginState,
+    onNavigateTo: (Destination) -> Unit,
     onEvent: (LoginEvent) -> Unit,
 ) {
+    val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+
+    CoroutineManagementSnackBar(
+        snackbarHostState = snackbarHostState,
+        informationState = state.information,
+    )
+
     Scaffold(
         modifier = modifier,
         contentWindowInsets = WindowInsets.statusBars,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) {
+                SnackbarCommon(
+                    informationState = state.information
+                )
+            }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -269,6 +289,7 @@ fun LoginScreen(
             LoginContent(
                 state = state,
                 onEvent = onEvent,
+                onNavigateTo = onNavigateTo,
             )
         }
     }

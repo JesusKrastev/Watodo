@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jesuskrastev.watodo.ui.composables.shimmerEffect
 import com.jesuskrastev.watodo.ui.features.components.TopBar
+import com.jesuskrastev.watodo.ui.navigation.Destination
 
 @Composable
 fun ActivityTitle(
@@ -209,6 +210,7 @@ fun ActivityShimmer(
 fun ActivitiesScreen(
     modifier: Modifier = Modifier,
     state: ActivitiesState,
+    onNavigateTo: (Destination) -> Unit,
     onEvent: (ActivitiesEvent) -> Unit,
 ) {
     Scaffold(

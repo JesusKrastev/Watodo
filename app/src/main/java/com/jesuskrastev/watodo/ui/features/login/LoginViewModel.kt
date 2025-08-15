@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.jesuskrastev.watodo.data.services.authentication.AuthServiceException
 import com.jesuskrastev.watodo.data.services.authentication.AuthServiceImplementation
+import com.jesuskrastev.watodo.utilities.error_handling.InformationUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authService: AuthServiceImplementation
+    private val authService: AuthServiceImplementation,
 ) : ViewModel() {
     private val _state = MutableStateFlow<LoginState>(LoginState())
     val state: StateFlow<LoginState> = _state
@@ -30,17 +31,30 @@ class LoginViewModel @Inject constructor(
         idToken: String,
         onNavigateToActivities: () -> Unit,
     ) {
+        _state.value = _state.value.copy(
+            information = InformationUiState.Information(
+                showProgress = true,
+                message = "Iniciando sesión...",
+            )
+        )
         viewModelScope.launch {
             try {
                 val result = authService.loginWithGoogle(idToken)
-
+                _state.value = _state.value.copy(
+                    information = InformationUiState.Hidden()
+                )
                 if(result != null) onNavigateToActivities()
             } catch (e: AuthServiceException) {
-//                informationState = InformationUiState.Error(
-//                    message = UiText.StringResource(R.string.error_signing_in_with_google),
-//                    onDismiss = { informationState = InformationUiState.Hidden() }
-//                )
-//                Log.d("LoginViewModel", "Error: ${e.message}")
+                _state.value = _state.value.copy(
+                    information = InformationUiState.Error(
+                        message = "Error al iniciar sesión",
+                        onDismiss = {
+                            _state.value = _state.value.copy(
+                                information = InformationUiState.Hidden()
+                            )
+                        }
+                    )
+                )
             }
         }
     }
@@ -49,22 +63,31 @@ class LoginViewModel @Inject constructor(
         onNavigateToActivities: () -> Unit,
     ) {
         viewModelScope.launch {
-//            informationState = InformationUiState.Information(
-//                showProgress = true,
-//                message = UiText.StringResource(R.string.signing_in),
-//            )
+            _state.value = _state.value.copy(
+                information = InformationUiState.Information(
+                    showProgress = true,
+                    message = "Iniciando sesión...",
+                )
+            )
             try {
                 withContext(Dispatchers.IO) {
                     authService.signIn(_state.value.email, _state.value.password)
                 }
-//                informationState = InformationUiState.Hidden()
+                _state.value = _state.value.copy(
+                    information = InformationUiState.Hidden()
+                )
                 onNavigateToActivities()
             } catch (e: AuthServiceException) {
-//                informationState = InformationUiState.Error(
-//                    message = UiText.StringResource(R.string.error_signing_in),
-//                    onDismiss = { informationState = InformationUiState.Hidden() }
-//                )
-                Log.d("LoginViewModel", "Error: ${e.message}")
+                _state.value = _state.value.copy(
+                    information = InformationUiState.Error(
+                        message = "Error al iniciar sesión",
+                        onDismiss = {
+                            _state.value = _state.value.copy(
+                                information = InformationUiState.Hidden()
+                            )
+                        }
+                    )
+                )
             }
         }
     }
