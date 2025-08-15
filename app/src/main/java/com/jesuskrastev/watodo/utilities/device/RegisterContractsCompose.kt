@@ -28,14 +28,14 @@ fun registerNotificationPermission(): ManagedActivityResultLauncher<String, Bool
 
 @Composable
 fun registerGoogleLauncher(
-    signInWithGoogle: (idToken: String) -> Unit,
+    loginWithGoogle: (idToken: String) -> Unit,
 ): ManagedActivityResultLauncher<Intent, ActivityResult> {
     return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         if (result.resultCode == Activity.RESULT_OK) {
             val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
                 val account: GoogleSignInAccount = task.getResult(ApiException::class.java)!!
-                signInWithGoogle(account.idToken!!)
+                loginWithGoogle(account.idToken!!)
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.d("GoogleLauncher", "Error: ${e.message}")
