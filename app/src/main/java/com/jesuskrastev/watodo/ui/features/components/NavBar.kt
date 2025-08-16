@@ -99,7 +99,7 @@ fun NavBar(
                     },
                     selected = selected,
                     onClick = {
-                        button.onClick()
+                        if(!selected) button.onClick()
                         selectedPage = index
                     }
                 )

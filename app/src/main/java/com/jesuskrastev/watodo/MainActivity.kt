@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
                     contentWindowInsets = WindowInsets.navigationBars,
                     bottomBar = {
                         if (currentRoute?.hasRoute(LoginRoute::class) == false)
-                            NavBar(onNavigateTo = { navController.navigate(it) }  )
+                            NavBar(onNavigateTo = { navController.navigate(it) })
                     }
                 ) { paddingValues ->
                     WatodoNavHost(
