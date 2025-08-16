@@ -25,5 +25,6 @@ fun WatodoNavHost(
                 navController.navigate(destination)
             },
         )
+        savedScreen()
     }
 }

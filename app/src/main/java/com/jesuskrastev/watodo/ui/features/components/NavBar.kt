@@ -26,10 +26,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.jesuskrastev.watodo.ui.navigation.ActivitiesRoute
+import com.jesuskrastev.watodo.ui.navigation.Destination
+import com.jesuskrastev.watodo.ui.navigation.SavedRoute
 
 @Composable
 fun NavBar(
     modifier: Modifier = Modifier,
+    onNavigateTo: (Destination) -> Unit,
 ) {
     @Immutable
     data class NavOption(
@@ -47,21 +51,27 @@ fun NavBar(
             unselectedIcon = Icons.Outlined.Search,
             description = "Actividades",
             title = "Actividades",
-            onClick = {},
+            onClick = {
+                onNavigateTo(ActivitiesRoute)
+            },
         ),
         NavOption(
             selectedIcon = Icons.Filled.Language,
             unselectedIcon = Icons.Outlined.Language,
             description = "Webs",
             title = "Webs",
-            onClick = {},
+            onClick = {
+
+            },
         ),
         NavOption(
             selectedIcon = Icons.Filled.Bookmark,
             unselectedIcon = Icons.Outlined.BookmarkBorder,
             description = "Guardados",
             title = "Guardados",
-            onClick = {},
+            onClick = {
+                onNavigateTo(SavedRoute)
+            },
         ),
     )
 
