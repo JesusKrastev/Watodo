@@ -1,11 +1,12 @@
 package com.jesuskrastev.watodo.ui.features.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.jesuskrastev.watodo.data.UserRepository
 import com.jesuskrastev.watodo.data.services.authentication.AuthServiceException
 import com.jesuskrastev.watodo.data.services.authentication.AuthServiceImplementation
+import com.jesuskrastev.watodo.models.User
 import com.jesuskrastev.watodo.utilities.error_handling.InformationUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authService: AuthServiceImplementation,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow<LoginState>(LoginState())
     val state: StateFlow<LoginState> = _state
@@ -40,6 +42,10 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val result = authService.loginWithGoogle(idToken)
+                withContext(Dispatchers.IO) {
+                    val existUser = userRepository.getById(authService.getUser()?.uid!!) == null
+                    if(existUser) userRepository.insert(User(id = authService.getUser()?.uid!!))
+                }
                 _state.value = _state.value.copy(
                     information = InformationUiState.Hidden()
                 )

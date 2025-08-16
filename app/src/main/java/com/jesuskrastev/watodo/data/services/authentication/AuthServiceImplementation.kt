@@ -20,6 +20,8 @@ class AuthServiceImplementation @Inject constructor(
 ): AuthService {
     private val logTag: String = "AuthServiceImplementation"
 
+    fun getUser(): FirebaseUser? = firebaseAuth.currentUser
+
     fun isAuthenticated(): Boolean = firebaseAuth.currentUser != null
 
     override fun resetEmail(email: String): Task<Void> =
