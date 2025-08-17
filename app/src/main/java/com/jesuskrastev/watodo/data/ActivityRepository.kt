@@ -4,6 +4,9 @@ import com.jesuskrastev.watodo.data.firestore.activity.ActivityFSDao
 import com.jesuskrastev.watodo.data.room.activity.ActivityDao
 import com.jesuskrastev.watodo.models.Activity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -11,28 +14,28 @@ class ActivityRepository @Inject constructor(
     private val activityFsDao: ActivityFSDao,
     private val activityDao: ActivityDao,
 ) {
-    suspend fun get(): List<Activity> = withContext(Dispatchers.IO) {
-        val local = activityDao.get().map { it.toActivity() }
-        val remote = activityFsDao.get().map { it.toActivity() }
+    suspend fun get(): Flow<List<Activity>> = withContext(Dispatchers.IO) {
+        val localFlow = activityDao.get().map { it.map { it.toActivity() } }
+        val remoteFlow = activityFsDao.get().map { it.map { it.toActivity() } }
 
-        when {
-            local.isEmpty() -> {
-                activityDao.deleteAll()
-                remote.forEach { activityDao.insert(it.toActivityEntity()) }
-                remote
-            }
-            local.size != remote.size -> {
-                activityDao.deleteAll()
-                remote.forEach { activityDao.insert(it.toActivityEntity()) }
-                remote
-            }
-            else -> {
-                local
+        combine(localFlow, remoteFlow) { localList, remoteList ->
+            when {
+                localList.isEmpty() -> {
+                    activityDao.deleteAll()
+                    remoteList.forEach { activityDao.insert(it.toActivityEntity()) }
+                    remoteList
+                }
+
+                localList.size != remoteList.size -> {
+                    activityDao.deleteAll()
+                    remoteList.forEach { activityDao.insert(it.toActivityEntity()) }
+                    remoteList
+                }
+
+                else -> {
+                    localList
+                }
             }
         }
-    }
-
-    suspend fun count(): Int = withContext(Dispatchers.IO) {
-        activityFsDao.count()
     }
 }

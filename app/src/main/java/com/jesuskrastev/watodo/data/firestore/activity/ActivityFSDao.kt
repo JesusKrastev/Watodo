@@ -1,6 +1,9 @@
 package com.jesuskrastev.watodo.data.firestore.activity
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.snapshots
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -12,15 +15,14 @@ class ActivityFSDao @Inject constructor(
             .document("v1")
             .collection("activities")
 
-    suspend fun get(): List<ActivityFirestore> =
+    fun get(): Flow<List<ActivityFirestore>> =
         firestore
             .activitiesCollection()
-            .get()
-            .await()
-            .documents
-            .mapNotNull { document ->
-                document.toObject(ActivityFirestore::class.java)
-                    ?.copy(id = document.id)
+            .snapshots()
+            .map { snapshot ->
+                snapshot.documents.mapNotNull { document ->
+                    document.toObject(ActivityFirestore::class.java)?.copy(id = document.id)
+                }
             }
 
     suspend fun getById(id: String): ActivityFirestore? =
