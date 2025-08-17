@@ -13,9 +13,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 object SavedRoute : Destination
 
-fun NavGraphBuilder.savedScreen() {
+fun NavGraphBuilder.savedScreen(
+    vm: SavedViewModel,
+) {
     composable<SavedRoute> {
-        val vm: SavedViewModel = hiltViewModel()
         val state by vm.state.collectAsStateWithLifecycle(initialValue = SavedState())
 
         SavedScreen(

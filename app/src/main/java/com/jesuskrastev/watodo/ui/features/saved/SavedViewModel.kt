@@ -13,6 +13,7 @@ import com.jesuskrastev.watodo.ui.features.toUserState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,29 +27,32 @@ class SavedViewModel @Inject constructor(
     val state: StateFlow<SavedState> = _state
 
     init {
+        loadActivities()
+    }
+
+    private fun loadActivities() {
+        val userId = authService.getUser()?.uid ?: return
+
         viewModelScope.launch {
-            loadUser()
-            loadActivities()
+            _state.value = SavedState(isLoading = true)
+            combine(
+                userRepository.getByIdFlow(userId),
+                activitiesRepository.get()
+            ) { user, activities ->
+                val userState = user?.toUserState() ?: UserState()
+                val activitiesState = activities
+                    .map { it.toActivityState() }
+                    .filter { userState.saved.contains(it.id) }
+
+                SavedState(
+                    user = userState,
+                    activities = activitiesState,
+                    isLoading = false
+                )
+            }.collect { newState ->
+                _state.value = newState
+            }
         }
-    }
-
-    private suspend fun loadUser() {
-        val userId = authService.getUser()?.uid
-
-        if(userId == null) return
-
-        _state.value = _state.value.copy(
-            user = userRepository.getById(userId)?.toUserState() ?: UserState(),
-        )
-    }
-
-    private suspend fun loadActivities() {
-        _state.value = _state.value.copy(
-            activities = activitiesRepository.get()
-                .map { it.toActivityState() }
-                .filter { _state.value.user.saved.contains(it.id) },
-            isLoading = false,
-        )
     }
 
     private fun Activity.toActivityState(): ActivityState =
@@ -83,18 +87,9 @@ class SavedViewModel @Inject constructor(
                 remove(savedActivity.id)
             }
         val updatedUser = user.copy(saved = savedActivities)
-        val updatedActivities = _state.value.activities
-            .filter { _state.value.user.saved.contains(it.id) }
-        _state.value = _state.value.copy(
-            user = updatedUser,
-            activities = updatedActivities,
-        )
         viewModelScope.launch {
             launch {
                 userRepository.update(updatedUser.toUser())
-            }
-            launch {
-                loadActivities()
             }
         }
     }

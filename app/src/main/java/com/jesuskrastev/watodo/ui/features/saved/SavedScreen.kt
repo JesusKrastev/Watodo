@@ -103,7 +103,7 @@ fun SavedTopAppBar(
 ) {
     TopBar(
         modifier = modifier,
-        title = "Actividades guardadas",
+        title = "Guardados",
         scrollBehavior = scrollBehavior,
     )
 }
