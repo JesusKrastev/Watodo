@@ -5,6 +5,6 @@ import com.jesuskrastev.watodo.ui.features.UserState
 data class ActivitiesState(
     val activities: List<ActivityState> = emptyList(),
     val expandedActivities: List<String> = emptyList(),
-    val isLoading: Boolean = true,
+    val isLoading: Boolean = false,
     val user: UserState = UserState(),
 )

@@ -1,5 +1,6 @@
 package com.jesuskrastev.watodo.ui.features.activities
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
