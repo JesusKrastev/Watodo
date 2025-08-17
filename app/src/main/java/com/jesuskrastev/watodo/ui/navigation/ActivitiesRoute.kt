@@ -14,10 +14,10 @@ import kotlinx.serialization.Serializable
 object ActivitiesRoute: Destination
 
 fun NavGraphBuilder.activitiesScreen(
+    vm: ActivitiesViewModel,
     onNavigateTo: (Destination) -> Unit,
 ) {
     composable<ActivitiesRoute> {
-        val vm: ActivitiesViewModel = hiltViewModel()
         val state by vm.state.collectAsStateWithLifecycle(initialValue = ActivitiesState())
 
         ActivitiesScreen(
