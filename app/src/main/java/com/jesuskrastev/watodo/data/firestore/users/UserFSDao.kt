@@ -2,6 +2,9 @@ package com.jesuskrastev.watodo.data.firestore.users
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.snapshots
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -13,17 +16,6 @@ class UserFSDao @Inject constructor(
             .document("v1")
             .collection("users")
 
-    suspend fun get(): List<UserFirestore> =
-        firestore
-            .usersCollection()
-            .get()
-            .await()
-            .documents
-            .mapNotNull { document ->
-                document.toObject(UserFirestore::class.java)
-                    ?.copy(id = document.id)
-            }
-
     suspend fun getById(id: String): UserFirestore? =
         firestore
             .usersCollection()
@@ -34,12 +26,21 @@ class UserFSDao @Inject constructor(
                 document.toObject(UserFirestore::class.java)?.copy(id = document.id)
             }
 
-    suspend fun insert(user: UserFirestore) =
+    fun getByIdFlow(id: String): Flow<UserFirestore?> {
+        return firestore
+            .usersCollection()
+            .document(id)
+            .snapshots()
+            .map { document ->
+                document.toObject(UserFirestore::class.java)?.copy(id = document.id)
+            }
+    }
+
+    fun insert(user: UserFirestore) =
         firestore
             .usersCollection()
             .document(user.id)
             .set(user)
-            .await()
 
     fun update(user: UserFirestore) =
         firestore
