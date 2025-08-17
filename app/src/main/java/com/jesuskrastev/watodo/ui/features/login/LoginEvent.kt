@@ -7,7 +7,7 @@ sealed interface LoginEvent {
     data class OnPasswordChanged(val password: String) : LoginEvent
     data class OnLoginWithGoogle(
         val idToken: String,
-        val onNavigateToActivities: () -> Unit,
+        val onRestartApp: () -> Unit,
     ): LoginEvent
     data class OnGoogleLoginSelected(val googleLauncher: (GoogleSignInClient) -> Unit): LoginEvent
     data class OnLogin(val onNavigateToActivities: () -> Unit): LoginEvent

@@ -1,6 +1,6 @@
 package com.jesuskrastev.watodo.ui.features.login
 
-import android.util.Log
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -211,6 +212,9 @@ fun LoginContent(
     onNavigateTo: (Destination) -> Unit,
     onEvent: (LoginEvent) -> Unit,
 ) {
+    val context = LocalContext.current
+    val activity = context as? android.app.Activity
+
     Column(
         modifier = modifier.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -245,7 +249,14 @@ fun LoginContent(
                 onEvent(
                     LoginEvent.OnLoginWithGoogle(
                         idToken = idToken,
-                        onNavigateToActivities = { onNavigateTo(ActivitiesRoute) },
+                        onRestartApp = {
+                            activity?.let {
+                                val intent = it.intent
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                it.finish()
+                                it.startActivity(intent)
+                            }
+                        },
                     )
                 )
             }

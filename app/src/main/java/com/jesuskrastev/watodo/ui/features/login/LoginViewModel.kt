@@ -31,7 +31,7 @@ class LoginViewModel @Inject constructor(
 
     private fun loginWithGoogle(
         idToken: String,
-        onNavigateToActivities: () -> Unit,
+        onRestartApp: () -> Unit,
     ) {
         _state.value = _state.value.copy(
             information = InformationUiState.Information(
@@ -44,12 +44,12 @@ class LoginViewModel @Inject constructor(
                 val result = authService.loginWithGoogle(idToken)
                 withContext(Dispatchers.IO) {
                     val existUser = userRepository.getById(authService.getUser()?.uid!!) == null
-                    if(existUser) userRepository.insert(User(id = authService.getUser()?.uid!!))
+                    if (existUser) userRepository.insert(User(id = authService.getUser()?.uid!!))
                 }
                 _state.value = _state.value.copy(
                     information = InformationUiState.Hidden()
                 )
-                if(result != null) onNavigateToActivities()
+                if (result != null) onRestartApp()
             } catch (e: AuthServiceException) {
                 _state.value = _state.value.copy(
                     information = InformationUiState.Error(
@@ -115,7 +115,7 @@ class LoginViewModel @Inject constructor(
             is LoginEvent.OnLoginWithGoogle -> {
                 loginWithGoogle(
                     idToken = event.idToken,
-                    onNavigateToActivities = event.onNavigateToActivities,
+                    onRestartApp = event.onRestartApp,
                 )
             }
 
@@ -124,6 +124,7 @@ class LoginViewModel @Inject constructor(
                     onNavigateToActivities = event.onNavigateToActivities,
                 )
             }
+
             else -> {}
         }
     }
