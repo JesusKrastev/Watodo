@@ -1,7 +1,7 @@
 package com.jesuskrastev.watodo.data
 
 import com.jesuskrastev.watodo.data.firestore.activity.ActivityFirestore
-import com.jesuskrastev.watodo.data.firestore.users.UserFirestore
+import com.jesuskrastev.watodo.data.firestore.user.UserFirestore
 import com.jesuskrastev.watodo.data.room.activity.ActivityEntity
 import com.jesuskrastev.watodo.models.Activity
 import com.jesuskrastev.watodo.models.User

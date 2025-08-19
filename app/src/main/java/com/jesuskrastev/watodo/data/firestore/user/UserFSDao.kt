@@ -1,4 +1,4 @@
-package com.jesuskrastev.watodo.data.firestore.users
+package com.jesuskrastev.watodo.data.firestore.user
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions

@@ -1,6 +1,6 @@
 package com.jesuskrastev.watodo.data
 
-import com.jesuskrastev.watodo.data.firestore.users.UserFSDao
+import com.jesuskrastev.watodo.data.firestore.user.UserFSDao
 import com.jesuskrastev.watodo.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

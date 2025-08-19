@@ -1,4 +1,4 @@
-package com.jesuskrastev.watodo.data.firestore.users
+package com.jesuskrastev.watodo.data.firestore.user
 
 data class UserFirestore(
     val id: String = "",
