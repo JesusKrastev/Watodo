@@ -21,11 +21,7 @@ fun WatodoNavHost(
         navController = navController,
         startDestination = ActivitiesRoute,
     ) {
-        loginScreen(
-            onNavigateTo = { destination ->
-                navController.navigate(destination)
-            },
-        )
+        loginScreen()
         activitiesScreen(
             vm = vmActivities,
             onNavigateTo = { destination ->

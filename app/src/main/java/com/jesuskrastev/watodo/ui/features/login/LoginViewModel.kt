@@ -66,7 +66,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun signIn(
-        onNavigateToActivities: () -> Unit,
+        onRestartApp: () -> Unit,
     ) {
         viewModelScope.launch {
             _state.value = _state.value.copy(
@@ -82,7 +82,7 @@ class LoginViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     information = InformationUiState.Hidden()
                 )
-                onNavigateToActivities()
+                onRestartApp()
             } catch (e: AuthServiceException) {
                 _state.value = _state.value.copy(
                     information = InformationUiState.Error(
@@ -121,7 +121,7 @@ class LoginViewModel @Inject constructor(
 
             is LoginEvent.OnLogin -> {
                 signIn(
-                    onNavigateToActivities = event.onNavigateToActivities,
+                    onRestartApp = event.onRestartApp,
                 )
             }
 

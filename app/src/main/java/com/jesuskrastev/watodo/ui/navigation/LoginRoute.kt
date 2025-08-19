@@ -13,16 +13,13 @@ import androidx.compose.runtime.getValue
 @Serializable
 object LoginRoute: Destination
 
-fun NavGraphBuilder.loginScreen(
-    onNavigateTo: (Destination) -> Unit,
-) {
+fun NavGraphBuilder.loginScreen() {
     composable<LoginRoute> {
         val vm: LoginViewModel = hiltViewModel()
         val state by vm.state.collectAsStateWithLifecycle(initialValue = LoginState())
 
         LoginScreen(
             state = state,
-            onNavigateTo = onNavigateTo,
             onEvent = vm::onEvent,
         )
     }

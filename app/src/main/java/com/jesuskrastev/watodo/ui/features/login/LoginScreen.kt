@@ -209,11 +209,18 @@ fun WelcomeSubtitle(
 fun LoginContent(
     modifier: Modifier = Modifier,
     state: LoginState,
-    onNavigateTo: (Destination) -> Unit,
     onEvent: (LoginEvent) -> Unit,
 ) {
     val context = LocalContext.current
     val activity = context as? android.app.Activity
+    val onRestartApp = {
+        activity?.let {
+            val intent = it.intent
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            it.finish()
+            it.startActivity(intent)
+        }
+    }
 
     Column(
         modifier = modifier.padding(16.dp),
@@ -235,7 +242,7 @@ fun LoginContent(
             onLogin = {
                 onEvent(
                     LoginEvent.OnLogin(
-                        onNavigateToActivities = { onNavigateTo(ActivitiesRoute) },
+                        onRestartApp = { onRestartApp() },
                     )
                 )
             }
@@ -249,14 +256,7 @@ fun LoginContent(
                 onEvent(
                     LoginEvent.OnLoginWithGoogle(
                         idToken = idToken,
-                        onRestartApp = {
-                            activity?.let {
-                                val intent = it.intent
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                                it.finish()
-                                it.startActivity(intent)
-                            }
-                        },
+                        onRestartApp = { onRestartApp() },
                     )
                 )
             }
@@ -269,7 +269,6 @@ fun LoginContent(
 fun LoginScreen(
     modifier: Modifier = Modifier,
     state: LoginState,
-    onNavigateTo: (Destination) -> Unit,
     onEvent: (LoginEvent) -> Unit,
 ) {
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
@@ -300,7 +299,6 @@ fun LoginScreen(
             LoginContent(
                 state = state,
                 onEvent = onEvent,
-                onNavigateTo = onNavigateTo,
             )
         }
     }

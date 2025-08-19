@@ -10,5 +10,5 @@ sealed interface LoginEvent {
         val onRestartApp: () -> Unit,
     ): LoginEvent
     data class OnGoogleLoginSelected(val googleLauncher: (GoogleSignInClient) -> Unit): LoginEvent
-    data class OnLogin(val onNavigateToActivities: () -> Unit): LoginEvent
+    data class OnLogin(val onRestartApp: () -> Unit): LoginEvent
 }
