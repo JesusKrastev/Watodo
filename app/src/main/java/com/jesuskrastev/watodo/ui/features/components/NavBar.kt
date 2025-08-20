@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.jesuskrastev.watodo.ui.navigation.ActivitiesRoute
 import com.jesuskrastev.watodo.ui.navigation.Destination
 import com.jesuskrastev.watodo.ui.navigation.SavedRoute
+import com.jesuskrastev.watodo.ui.navigation.WebsRoute
 
 @Composable
 fun NavBar(
@@ -61,7 +62,7 @@ fun NavBar(
             description = "Webs",
             title = "Webs",
             onClick = {
-
+                onNavigateTo(WebsRoute)
             },
         ),
         NavOption(

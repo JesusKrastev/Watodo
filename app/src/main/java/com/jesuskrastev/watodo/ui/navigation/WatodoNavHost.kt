@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.jesuskrastev.watodo.ui.features.activities.ActivitiesViewModel
 import com.jesuskrastev.watodo.ui.features.saved.SavedViewModel
+import com.jesuskrastev.watodo.ui.features.webs.WebsViewModel
 
 @Composable
 fun WatodoNavHost(
@@ -15,6 +16,7 @@ fun WatodoNavHost(
 ) {
     val vmActivities: ActivitiesViewModel = hiltViewModel()
     val vmSaved: SavedViewModel = hiltViewModel()
+    val vmWebs: WebsViewModel = hiltViewModel()
 
     NavHost(
         modifier = modifier,
@@ -30,6 +32,9 @@ fun WatodoNavHost(
         )
         savedScreen(
             vm = vmSaved,
+        )
+        websScreen(
+            vm = vmWebs,
         )
     }
 }
